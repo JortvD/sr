@@ -20,6 +20,7 @@ import { FoldersModule } from 'src/folders/module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get('MONGODB_URI'),
+        dbName: "sr",
         user: configService.get('MONGO_INITDB_ROOT_USERNAME'),
         pass: configService.get('MONGO_INITDB_ROOT_PASSWORD'),
       }),
