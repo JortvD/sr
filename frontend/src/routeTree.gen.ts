@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as FolderCreateImport } from './routes/folder.create'
 import { Route as FolderIdEditImport } from './routes/folder.$id.edit'
+import { Route as CardIdEditImport } from './routes/card.$id.edit'
 import { Route as FolderFolderIdCardCreateImport } from './routes/folder.$folderId.card.create'
 
 // Create Virtual Routes
@@ -45,6 +46,12 @@ const FolderCreateRoute = FolderCreateImport.update({
 const FolderIdEditRoute = FolderIdEditImport.update({
   id: '/folder/$id/edit',
   path: '/folder/$id/edit',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CardIdEditRoute = CardIdEditImport.update({
+  id: '/card/$id/edit',
+  path: '/card/$id/edit',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -79,6 +86,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FolderCreateImport
       parentRoute: typeof rootRoute
     }
+    '/card/$id/edit': {
+      id: '/card/$id/edit'
+      path: '/card/$id/edit'
+      fullPath: '/card/$id/edit'
+      preLoaderRoute: typeof CardIdEditImport
+      parentRoute: typeof rootRoute
+    }
     '/folder/$id/edit': {
       id: '/folder/$id/edit'
       path: '/folder/$id/edit'
@@ -102,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
   '/folder/create': typeof FolderCreateRoute
+  '/card/$id/edit': typeof CardIdEditRoute
   '/folder/$id/edit': typeof FolderIdEditRoute
   '/folder/$folderId/card/create': typeof FolderFolderIdCardCreateRoute
 }
@@ -110,6 +125,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
   '/folder/create': typeof FolderCreateRoute
+  '/card/$id/edit': typeof CardIdEditRoute
   '/folder/$id/edit': typeof FolderIdEditRoute
   '/folder/$folderId/card/create': typeof FolderFolderIdCardCreateRoute
 }
@@ -119,6 +135,7 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
   '/folder/create': typeof FolderCreateRoute
+  '/card/$id/edit': typeof CardIdEditRoute
   '/folder/$id/edit': typeof FolderIdEditRoute
   '/folder/$folderId/card/create': typeof FolderFolderIdCardCreateRoute
 }
@@ -129,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/folder/create'
+    | '/card/$id/edit'
     | '/folder/$id/edit'
     | '/folder/$folderId/card/create'
   fileRoutesByTo: FileRoutesByTo
@@ -136,6 +154,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/folder/create'
+    | '/card/$id/edit'
     | '/folder/$id/edit'
     | '/folder/$folderId/card/create'
   id:
@@ -143,6 +162,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/folder/create'
+    | '/card/$id/edit'
     | '/folder/$id/edit'
     | '/folder/$folderId/card/create'
   fileRoutesById: FileRoutesById
@@ -152,6 +172,7 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginRoute: typeof LoginRoute
   FolderCreateRoute: typeof FolderCreateRoute
+  CardIdEditRoute: typeof CardIdEditRoute
   FolderIdEditRoute: typeof FolderIdEditRoute
   FolderFolderIdCardCreateRoute: typeof FolderFolderIdCardCreateRoute
 }
@@ -160,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginRoute: LoginRoute,
   FolderCreateRoute: FolderCreateRoute,
+  CardIdEditRoute: CardIdEditRoute,
   FolderIdEditRoute: FolderIdEditRoute,
   FolderFolderIdCardCreateRoute: FolderFolderIdCardCreateRoute,
 }
@@ -177,6 +199,7 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/folder/create",
+        "/card/$id/edit",
         "/folder/$id/edit",
         "/folder/$folderId/card/create"
       ]
@@ -189,6 +212,9 @@ export const routeTree = rootRoute
     },
     "/folder/create": {
       "filePath": "folder.create.tsx"
+    },
+    "/card/$id/edit": {
+      "filePath": "card.$id.edit.tsx"
     },
     "/folder/$id/edit": {
       "filePath": "folder.$id.edit.tsx"

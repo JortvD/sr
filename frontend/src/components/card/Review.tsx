@@ -2,8 +2,7 @@ import { Skeleton } from "@mui/material";
 import { client, fetchClient } from "../../client";
 import { useEffect, useState } from "react";
 import { StyledButton } from "../mui";
-import Markdown from "react-markdown";
-import RemarkMath from "remark-math";
+import { Markdown } from "../Markdown";
 
 const BUTTON_MAP = {
 	"Hard": 0,
@@ -43,8 +42,6 @@ export function Review() {
 		refetch();
 	}
 
-	console.log(card);
-
 	if (error) {
 		return <div className="p-4 rounded border border-white">There are no cards that need to be reviewed.</div>
 	}
@@ -56,13 +53,13 @@ export function Review() {
 	return (
 		<div className="p-4 rounded border border-white flex flex-col gap-4">
 			<div>
-				<Markdown className="text-sm" remarkPlugins={[RemarkMath]}>{card.variants[variant].question}</Markdown>
+				<Markdown value={card.variants[variant].question} />
 			</div>
 			{!showAnswer && <StyledButton onClick={() => setShowAnswer(true)}>Show Answer</StyledButton>}
 			{showAnswer && (
 				<>
 					<div className="border-t border-gray-600 pt-4">
-						<Markdown className="text-sm" remarkPlugins={[RemarkMath]}>{card.variants[variant].answer}</Markdown>
+						<Markdown value={card.variants[variant].answer} />
 					</div>
 					<div className="flex flex-row justify-between gap-2">
 						{Object.entries(BUTTON_MAP).map(([key, value]) => (

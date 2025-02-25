@@ -1,9 +1,8 @@
 import { IconButton } from "@mui/material";
 import { UpdateCard } from "../../types";
-import { Check, Close } from "@mui/icons-material";
-import { StyledTextField } from "../mui";
-import Markdown from 'react-markdown'
-import RemarkMath from 'remark-math'
+import { Add, Check, Close } from "@mui/icons-material";
+import { StyledIconButton } from "../mui";
+import { MarkdownInput } from "../MarkdownInput";
 
 interface CardSuggestionProps {
 	card: UpdateCard;
@@ -35,32 +34,29 @@ export function CardSuggestion({ card, updateCard, onAccept, onReject }: CardSug
 		updateCard({ ...card, variants: newVariants });
 	}
 
+	const addVariant = () => {
+		updateCard({ ...card, variants: [...card.variants, { question: '', answer: '', alternatives: [] }] });
+	}
+
 	return (
 		<div className="flex flex-row gap-6 items-center pt-4">
-			<div className="flex flex-col gap-4 grow">
+			<div className="flex flex-col gap-6 grow">
 				{card.variants.map((variant, index) => (
 					<div key={index} className="flex flex-row gap-2 items-center">
 						<IconButton onClick={() => removeVariant(index)}>
 							<Close className="*:fill-white" />
 						</IconButton>
-						<div className="flex flex-col gap-2 grow">
-							<StyledTextField 
-								label="Question"
-								value={variant.question}
-								onChange={(e) => changeVariantQuestion(index, e.target.value)}
-								multiline
-							/>
-							<Markdown className="text-sm" remarkPlugins={[RemarkMath]}>{variant.question}</Markdown>
-							<StyledTextField 
-								label="Answer"
-								value={variant.answer}
-								onChange={(e) => changeVariantAnswer(index, e.target.value)}
-								multiline
-							/>
-							<Markdown className="text-sm" remarkPlugins={[RemarkMath]}>{variant.answer}</Markdown>
+						<div className="flex flex-col gap-4 grow">
+							<MarkdownInput label="Question" value={variant.question} onChange={(value) => changeVariantQuestion(index, value)} />
+							<MarkdownInput label="Answer" value={variant.answer} onChange={(value) => changeVariantAnswer(index, value)} />
 						</div>
 					</div>
 				))}
+				<div className="flex flex-col items-center">
+					<StyledIconButton onClick={() => addVariant()}>
+						<Add />
+					</StyledIconButton>
+				</div>
 			</div>
 			<div className="flex flex-col gap-4">
 				<IconButton onClick={onAccept}>

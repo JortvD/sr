@@ -1,4 +1,4 @@
-import { Body, Controller, NotFoundException, InternalServerErrorException, Post, Req, Get, Param } from "@nestjs/common";
+import { Body, Controller, NotFoundException, InternalServerErrorException, Post, Req, Get, Param, Delete, Put } from "@nestjs/common";
 import { ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponse } from "@nestjs/swagger";
 import { AuthService } from "src/auth/service";
 import { UsersService } from "src/users/service";
@@ -41,6 +41,7 @@ export class CardsController {
 
 	@Post()
 	@ApiCreatedResponse({ type: CardDto })
+	@ApiNotFoundResponse({ type: DefaultErrorResponse })
 	async create(@Req() request: Request, @Body() card: SetCardDto) {
 		const user = await this.authService.getUserFromRequest(request);
 		
@@ -57,6 +58,23 @@ export class CardsController {
 		}));
 	}
 
+	@Delete(':id')
+	@ApiOkResponse()
+	@ApiNotFoundResponse({ type: DefaultErrorResponse })
+	async delete(@Req() request: Request, @Param('id') id: string) {
+		const user = await this.authService.getUserFromRequest(request);
+
+		if (!user) throw new NotFoundException('User not found');
+
+		const card = await this.cardsService.findOne(id);
+
+		if (!card) throw new NotFoundException('Card not found');
+
+		if (!await this.userIsOwnerOrAdmin(request, card.owner)) throw new NotFoundException('User is not owner of card');
+
+		return await this.cardsService.remove(id);
+	}
+
 	@Get('review')
 	@ApiOkResponse({ type: CardDto })
 	@ApiNotFoundResponse({ type: DefaultErrorResponse })
@@ -70,6 +88,36 @@ export class CardsController {
 		if (!card) throw new NotFoundException('No cards to review');
 
 		return new CardDto(card);
+	}
+
+	@Get(':id')
+	@ApiOkResponse({ type: CardDto })
+	@ApiNotFoundResponse({ type: DefaultErrorResponse })
+	async findOne(@Req() request: Request, @Param('id') id: string) {
+		const card = await this.cardsService.findOne(id);
+
+		if (!card) throw new NotFoundException('Card not found');
+
+		if (!await this.userIsOwnerOrAdmin(request, card.owner)) throw new NotFoundException('User is not owner of card');
+
+		return new CardDto(card);
+	}
+
+	@Put(':id')
+	@ApiOkResponse({ type: CardDto })
+	@ApiNotFoundResponse({ type: DefaultErrorResponse })
+	async update(@Req() request: Request, @Param('id') id: string, @Body() body: SetCardDto) {
+		let card = await this.cardsService.findOne(id);
+
+		if (!card) throw new NotFoundException('Card not found');
+
+		if (!await this.userIsOwnerOrAdmin(request, card.owner)) throw new NotFoundException('User is not owner of card');
+
+		const updatedCard = await this.cardsService.update(id, body);
+
+		if (!updatedCard) throw new NotFoundException('Failed to update card');
+
+		return new CardDto(updatedCard);
 	}
 
 	@Post(':id/review')
@@ -102,7 +150,7 @@ export class CardsController {
 		let content = await this.openaiService.createCompletion([
 			{ role: 'system', content: 'You are an assistant that creates interesting flashcards. The text of your answers is allowed to include markdown and latex. It is important that the result is always formatted in XML with "root" as top element, with "flashcard" for each flashcard, each containing "variant" elements, each having a "question" and "answer" element.' },
 			{ role: 'user', content: `Generate as many flascards as are interesting, and generate a number of variants for each flashcard. Make sure the answers are single pieces of information or short lists. Use the following text to create the flashcards from: ${body.text}` }
-		]);
+		], body.model);
 
 		if (content === null) throw new NotFoundException('Failed to create flashcards');
 
@@ -117,7 +165,7 @@ export class CardsController {
 		let content = await this.openaiService.createCompletion([
 			{ role: 'system', content: 'You are an assistant that creates interesting flashcards. The text of your questions and answers is allowed to include markdown and latex. It is important that the result is always formatted in XML with "root" as top element, with "flashcard" for each flashcard, each containing "variant" elements, each having a "question" and "answer" element.' },
 			{ role: 'user', content: `Improve the following flascard, and generate multiple variants. Make sure your answer is short and does not repeat. The improved flashcard should be easy to memorize and should be insightful. \nQuestion: ${body.answer}\nAnswer: ${body.answer}` }
-		]);
+		], body.model);
 
 		if (content === null) throw new NotFoundException('Failed to create flashcards');
 

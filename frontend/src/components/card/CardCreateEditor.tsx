@@ -7,6 +7,7 @@ import { Tab } from "@mui/material";
 import { FromTextCardCreate } from "./editors/FromTextCardCreate";
 import { StyledTabs } from "../mui";
 import { ImproveTextCardCreate } from "./editors/ImproveTextCardCreate";
+import { RawCardCreate } from "./editors/RawCardCreate";
 
 interface CardCreateEditorProps {
 	onSave: (card: UpdateCard) => Promise<Card | undefined>;
@@ -48,15 +49,9 @@ export function CardCreateEditor({onSave, onExit}: CardCreateEditorProps) {
 					<Tab label="Raw"/>
 				</StyledTabs>
 				<div className="p-4">
-					{tab === TabIndex.FromText && (
-						<FromTextCardCreate createCard={createCard}/>
-					)}
-					{tab === TabIndex.ImproveText && (
-						<ImproveTextCardCreate createCard={createCard}/>
-					)}
-					{tab === TabIndex.Raw && (
-						<div>Raw</div>
-					)}
+					<FromTextCardCreate createCard={createCard} show={tab === TabIndex.FromText} />
+					<ImproveTextCardCreate createCard={createCard} show={tab === TabIndex.ImproveText} />
+					<RawCardCreate createCard={createCard} show={tab === TabIndex.Raw} />
 				</div>
 			</EditorBody>
 		</Editor>

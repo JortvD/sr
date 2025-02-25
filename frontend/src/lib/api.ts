@@ -100,6 +100,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cards/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CardsController_findOne"];
+        put: operations["CardsController_update"];
+        post?: never;
+        delete: operations["CardsController_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cards/review": {
         parameters: {
             query?: never;
@@ -276,6 +292,7 @@ export interface components {
         };
         CreateFromTextDto: {
             text: string;
+            model: string;
         };
         CardValueDto: {
             variants: components["schemas"]["CardVariantDto"][];
@@ -283,6 +300,7 @@ export interface components {
         ImproveFromTextDto: {
             question: string;
             answer: string;
+            model: string;
         };
         SetFolderDto: {
             path: string[];
@@ -570,6 +588,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CardDto"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultErrorResponse"];
+                };
+            };
+        };
+    };
+    CardsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDto"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultErrorResponse"];
+                };
+            };
+        };
+    };
+    CardsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetCardDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDto"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultErrorResponse"];
+                };
+            };
+        };
+    };
+    CardsController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultErrorResponse"];
                 };
             };
         };

@@ -75,6 +75,9 @@ export class SetCardDto {
 export class CreateFromTextDto {
 	@ApiProperty()
 	text: string;
+
+	@ApiProperty()
+	model: string;
 }
 
 export class ImproveFromTextDto {
@@ -83,6 +86,9 @@ export class ImproveFromTextDto {
 
 	@ApiProperty()
 	answer: string;
+
+	@ApiProperty()
+	model: string;
 }
 
 export class ReviewCardDto {

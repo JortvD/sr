@@ -15,9 +15,9 @@ export class OpenAIService {
     });
   }
 
-  async createCompletion(messages: ChatCompletionMessageParam[]): Promise<string|null> {
+  async createCompletion(messages: ChatCompletionMessageParam[], model: string = "gpt-4o"): Promise<string|null> {
     const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4o',
+      model,
       messages
     });
 

@@ -5,6 +5,7 @@ import { Collapse, IconButton, Typography } from '@mui/material'
 import { Add, Edit, ExpandMore } from '@mui/icons-material'
 import { useNavigate } from '@tanstack/react-router'
 import { DeleteButton } from '../DeleteButton'
+import { OptionButtons } from '../OptionButtons'
 
 interface FolderCollapseProps {
 	folder: Folder
@@ -14,6 +15,7 @@ interface FolderCollapseProps {
 export function FolderCollapse({folder, onDelete}: FolderCollapseProps) {
 	const navigate = useNavigate()
 	const [show, setShow] = useState(false)
+	const [showButtons, setShowButtons] = useState(false)
 
 	const openEditPage = () => {
 		navigate({ to: `/folder/${folder.id}/edit` })
@@ -44,7 +46,7 @@ export function FolderCollapse({folder, onDelete}: FolderCollapseProps) {
 						{folder.path.join('/')}
 					</Typography>
 				</div>
-				<div className='flex flex-row items-center gap-2'>
+				<OptionButtons open={showButtons} setOpen={setShowButtons}>
 					<DeleteButton onDelete={() => onDelete(folder.id)} />
 					<IconButton onClick={() => openEditPage()} >
 						<Edit className="*:fill-white" />
@@ -52,10 +54,10 @@ export function FolderCollapse({folder, onDelete}: FolderCollapseProps) {
 					<IconButton onClick={() => openNewCardPage()} >
 						<Add className="*:fill-white" />
 					</IconButton>
-				</div>
+				</OptionButtons>
 			</div>
 			<Collapse in={show} timeout="auto" unmountOnExit>
-				<div className="ml-[19px] p-4 border-l border-white">
+				<div className="ml-[19px] py-4 pl-4 border-l border-white">
 					<QuickShowList folderId={folder.id} />
 				</div>
 			</Collapse>

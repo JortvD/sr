@@ -5,24 +5,28 @@ import { StyledButton, StyledTextField } from "../../mui";
 import { UpdateCard } from "../../../types";
 import { CardSuggestion } from "../CardSuggestion";
 import { nanoid } from "nanoid";
+import { ModelSelect } from "../ModelSelect";
 
 interface ImproveTextCardCreateProps {
 	createCard: (card: UpdateCard) => void;
+	show: boolean;
 }
 
-export function ImproveTextCardCreate({createCard}: ImproveTextCardCreateProps) {
-	const [questionText, setQuestionText] = useState<string>('')
-	const [answerText, setAnswerText] = useState<string>('')
+export function ImproveTextCardCreate({createCard, show}: ImproveTextCardCreateProps) {
+	const [question, setQuestion] = useState<string>('')
+	const [answer, setAnswer] = useState<string>('')
 	const [suggestedCards, setSuggestedCards] = useState<UpdateCard[]>([])
 	const [loading, setLoading] = useState<boolean>(false)
+	const [model, setModel] = useState<string>('')
 
 	const handleGenerate = async () => {
 		setLoading(true)
 
 		const response = await fetchClient.POST(`/cards/improve-text`, {
 			body: {
-				question: questionText,
-				answer: answerText
+				question,
+				answer,
+				model
 			}
 		})
 
@@ -59,23 +63,24 @@ export function ImproveTextCardCreate({createCard}: ImproveTextCardCreateProps) 
 	}
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div className={`flex flex-col gap-4 ${show ? '' : 'hidden'}`}>
 			<div className="flex flex-col gap-2">
 				<StyledTextField 
 					label="Question" 
-					value={questionText} 
-					onChange={(e) => setQuestionText(e.target.value)} 
+					value={question} 
+					onChange={(e) => setQuestion(e.target.value)} 
 					multiline
 					minRows={2}
 				/>
 				<StyledTextField 
 					label="Answer" 
-					value={answerText} 
-					onChange={(e) => setAnswerText(e.target.value)} 
+					value={answer} 
+					onChange={(e) => setAnswer(e.target.value)} 
 					multiline
 					minRows={2}
 				/>
-				<div className="flex flex-row justify-end">
+				<div className="flex flex-row justify-between items-center">
+					<ModelSelect model={model} setModel={setModel} />
 					<StyledButton onClick={() => handleGenerate()}>Generate</StyledButton>
 				</div>
 			</div>
@@ -85,6 +90,7 @@ export function ImproveTextCardCreate({createCard}: ImproveTextCardCreateProps) 
 				<div className="flex flex-col gap-4 divide-y">
 					{suggestedCards.map((card, index) => (
 						<CardSuggestion 
+							key={index}
 							card={card} 
 							updateCard={(updatedCard: UpdateCard) => updateCard(index, updatedCard)} 
 							onAccept={() => acceptCard(index)} 
